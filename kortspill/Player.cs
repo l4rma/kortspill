@@ -8,11 +8,11 @@ namespace kortspill
 {
     class Player : IPlayer
     {
-        private ArrayList hand = new ArrayList();
+        public ArrayList hand = new ArrayList();
 
-        public void requestCard()
+        public void requestCard(Deck deck)
         {
-            throw new NotImplementedException();
+            deck.DealTopCard(this);
         }
 
         public void discardCard()
