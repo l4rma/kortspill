@@ -7,7 +7,8 @@ namespace kortspill
 {
     class Deck
     {
-        private List<Card> deck = new List<Card>();
+        public static List<Card> deck = new List<Card>();
+        private static Object _lock = new Object();
 
         public Deck()
         {
@@ -46,11 +47,23 @@ namespace kortspill
             }
         }
 
-        public void DealTopCard(Player player)
+        public static void DealTopCard(Player player)
         {
-            player.hand.Add(deck[0]);
-            deck.RemoveAt(0);
+            lock (_lock)
+            {
+                player.hand.Add(deck[0]);
+                Console.WriteLine(player.getName() + " drew " + deck[0].getCardName());
+                deck.RemoveAt(0);
+                
+            }
+            
         }
+
+        public static int getDeckSize()
+        {
+            return deck.Count;
+        }
+
     }
 }
 

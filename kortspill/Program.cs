@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
@@ -8,6 +9,10 @@ namespace kortspill
 {
     class Program
     {
+        private object _lock;
+        public static List<Thread> threads = new List<Thread>();
+        public static List<Player> players = new List<Player>();
+
         static void Main(string[] args )
         {
             Init();
@@ -15,24 +20,35 @@ namespace kortspill
 
         private static void Init()
         {
+            GameManager gm = new GameManager();
             Deck deck = new Deck();
+
+            Player player = PlayerFactory.CreatePlayer();
+            Player player2 = PlayerFactory.CreatePlayer();
+            Player player3 = PlayerFactory.CreatePlayer();
+
+            players.Add(player);
+            players.Add(player2);
+            players.Add(player3);
+
+            Thread t = new Thread(new ThreadStart(player.play));
+            Thread t2 = new Thread(new ThreadStart(player2.play));
+            Thread t3 = new Thread(new ThreadStart(player3.play));
+
+            threads.Add(t);
+            threads.Add(t2);
+            threads.Add(t3);
             
-            Player player1 = new Player();
+            t.Start();
+            t2.Start();
+            t3.Start();
+            
 
-            player1.requestCard(deck);
-            player1.requestCard(deck);
-            player1.requestCard(deck);
-            player1.requestCard(deck);
-
-            Console.WriteLine("player1 hand:");
-
-            foreach (Card card in player1.getHand())
-            {
-                Console.WriteLine(card.getCardName());
-            }
-
-            Console.WriteLine("The deck:");
-            deck.List();
         }
+
+
+        
+
+        
     }
 }

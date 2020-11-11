@@ -7,8 +7,8 @@ namespace kortspill
 {
     interface IPlayer
     {
-        public void requestCard(Deck deck);
+        public void requestCard();
         public void discardCard();
-        public ArrayList getHand();
+        public List<Card> getHand();
     }
 }
