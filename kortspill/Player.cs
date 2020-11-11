@@ -25,7 +25,7 @@ namespace kortspill
             {
                 requestCard();
                 //checkForSpecialCards();
-                discardCard();
+                discardCard(whatToGiveAway());
                 checkForWin();
                 Thread.Sleep(100);
 
@@ -33,24 +33,41 @@ namespace kortspill
 
         }
 
-        private void checkForWin()
+        private Card whatToGiveAway()
         {
-            int spades = 0;
             foreach (Card card in hand)
             {
-                if (card.getType() == CardType.Spades.ToString())
+                if (count(card.getType()) < 2)
                 {
-                    spades++;
+                    return card;
                 }
             }
+            return hand[0];
+        }
 
-            if (spades > 2)
+        private void checkForWin()
+        {
+            if (count(CardType.Spades) > 3 || count(CardType.Diamonds) > 3 || count(CardType.Hearts) > 3 || count(CardType.Clubs) > 3)
             {
-                Console.WriteLine(this.getName() + " has 4 spades");
                 winner = true;
                 GameManager.endGame();
             }
             
+        }
+
+        private int count(CardType cardtype)
+        {
+            int amount = 0;
+            foreach (Card card in hand)
+            {
+                if (card.getType() == cardtype)
+                {
+                    amount++;
+                }
+                
+            }
+
+            return amount;
         }
 
         private void checkForSpecialCards()
@@ -64,13 +81,13 @@ namespace kortspill
             Deck.DealTopCard(this);
         }
 
-        public void discardCard()
+        public void discardCard(Card card)
         {
             if (getHandSize() > 4)
             {
-                Deck.deck.Add(hand[0]);
-                Console.WriteLine(this.getName() + " discarded " + hand[0].getCardName());
-                hand.RemoveAt(0);
+                Deck.deck.Add(card);
+                Console.WriteLine(this.getName() + " discarded " + card.getCardName());
+                hand.Remove(card);
             }
         }
 

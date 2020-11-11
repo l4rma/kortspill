@@ -8,6 +8,6 @@ namespace kortspill
         
         public string getValue();
 
-        public string getType();
+        public CardType getType();
     }
 }

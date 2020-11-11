@@ -25,9 +25,9 @@ namespace kortspill
             return value.ToString();
         }
 
-        public string getType()
+        public CardType getType()
         {
-            return type.ToString();
+            return type;
         }
     }
 }

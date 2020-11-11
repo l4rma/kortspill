@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -15,26 +16,23 @@ namespace kortspill
             gameOver = true;
 
             Thread.Sleep(1000);
-
-            Console.WriteLine("----------");
-            Console.WriteLine("Game Over!");
-            Console.WriteLine("----------");
-            
-
             Console.WriteLine(" ");
-            Console.WriteLine("Deck: "+ Deck.getDeckSize());
 
             foreach (Player player in Program.players)
             {
                 if (player.winner)
                 {
-                    Console.WriteLine(player.getName() + " won the game!");
-                }
-            }
+                    Console.WriteLine("|-----------------|");
+                    Console.WriteLine("|-" + player.getName() + " won the game!-|");
+                    Console.WriteLine("|-----------------|");
+                    Console.WriteLine();
+                    Console.WriteLine("Winning hand:");
+                    foreach (Card card in player.getHand())
+                    {
+                        Console.WriteLine("-" + card.getCardName());
+                    }
 
-            foreach (Player player in Program.players)
-            {
-                Console.WriteLine(player.getName() + " " + player.getHandSize());
+                }
             }
         }
 
