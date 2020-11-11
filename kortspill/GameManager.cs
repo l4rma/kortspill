@@ -8,6 +8,8 @@ namespace kortspill
 {
     class GameManager
     {
+        private static List<Thread> threads = new List<Thread>();
+        private static List<Player> players = new List<Player>();
         private object _lock;
         public static bool gameOver = false;
 
@@ -16,9 +18,15 @@ namespace kortspill
             gameOver = true;
 
             Thread.Sleep(1000);
+
+            printWinner();
+        }
+
+        private static void printWinner()
+        {
             Console.WriteLine(" ");
 
-            foreach (Player player in Program.players)
+            foreach (Player player in players)
             {
                 if (player.winner)
                 {
@@ -35,7 +43,48 @@ namespace kortspill
                 }
             }
         }
+        public void Init()
+        {
+            Deck deck = new Deck();
+            string input = null;
+            int num = -1;
+            while (!int.TryParse(input, out num)) // Check if input is int
+            {
+                Console.Clear();
+                Console.WriteLine("How many players?");
+                input = Console.ReadLine();
+            }
+            Console.Clear();
+            createPlayers(num);
+            createThreads(num);
+            startThreads(num);
+        }
 
+        private void createPlayers(int num)
+        {
+            //Create players
+            for (int i = 0; i < num; i++)
+            {
+                players.Add(PlayerFactory.CreatePlayer());
+
+            }
+        }
+        private void createThreads(int num)
+        {
+            //Create threads
+            for (int i = 0; i < num; i++)
+            {
+                threads.Add(new Thread(new ThreadStart(players[i].play)));
+            }
+        }
+        private void startThreads(int num)
+        {
+            //Start threads
+            for (int i = 0; i < num; i++)
+            {
+                threads[i].Start();
+            }
+        }
 
 
     }
