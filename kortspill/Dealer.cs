@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 
 
@@ -45,19 +46,83 @@ namespace kortspill
         {
             foreach (var card in Deck)
             {
-                Console.WriteLine(card.getCardName());
+                Console.WriteLine(card.GetCardName());
+            }
+        }
+
+        public static void AcceptCardRequest(Player player)
+        {
+            lock (Lock)
+            {
+                if (player.IsQuarantined)
+                {
+                    Console.WriteLine(player.GetName() + " requested a card, but is Quarantined!");
+                    Console.WriteLine("He did not receive a card, but it no longer in Quarantine.");
+                    player.IsQuarantined = false;
+                    return;
+                }
+                DealTopCard(player);
             }
         }
 
         public static void DealTopCard(Player player)
         {
-            lock (Lock)
+            ICard card = Deck[0];                // Card to deal
+            player.GetHand().Add(card);          // Give card to player
+            Deck.RemoveAt(0);               // Remove card from dealer
+            Console.WriteLine(player.GetName() + " received " + card.GetCardName()); 
+            GameManager.CheckCard(player, card); // Check if card has a special rule
+            
+        }
+
+        public static void DealStartingHands()
+        {
+            foreach (Player player in GameManager.GetPlayers())
+            {
+                Deal4CardsToPlayer(player);
+            }
+        }
+
+        private static void Deal4CardsToPlayer(Player player)
+        {
+            for (int i = 0; i < 4; i++)
             {
                 player.GetHand().Add(Deck[0]);
-                Console.WriteLine(player.GetName() + " drew " + Deck[0].getCardName());
                 Deck.RemoveAt(0);
-                
             }
+
+            Console.WriteLine(player.GetName() + " gets 4 cards.");
+
+            CheckStarterHand(player);
+        }
+
+        private static void CheckStarterHand(Player player)
+        {
+            if (player.HasWinningHand())
+            {
+                Console.WriteLine(player.GetName() + " was dealt a winning hand,");
+                Console.WriteLine("wich is not a legal starting hand.");
+                player.DiscardHand();
+                Deal4CardsToPlayer(player);
+            }
+        }
+
+        public static ICard ReturnRandomCardFromDeck()
+        {
+            var rnd = new Random();
+            ICard card = Deck[rnd.Next(GetDeckCount())];
+            while (card.SpecialRule != null)
+            {
+                rnd = new Random();
+                card = Deck[rnd.Next(GetDeckCount())];
+            }
+
+            return card;
+        }
+
+        public static int GetDeckCount()
+        {
+            return Deck.Count;
         }
     }
 }

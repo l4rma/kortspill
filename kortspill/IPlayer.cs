@@ -7,8 +7,9 @@ namespace kortspill
 {
     internal interface IPlayer
     {
+        public bool IsQuarantined { get; set; }
         public void RequestCard();
-        public void DiscardCard(ICard card);
+        public void DiscardUnwantedCard(ICard card);
         public List<ICard> GetHand();
     }
 }

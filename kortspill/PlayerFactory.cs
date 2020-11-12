@@ -7,7 +7,7 @@ namespace kortspill
     internal class PlayerFactory
     {
 
-        private static string[] PlayerNames = { "Nils", "Kåre", "Geir", "Otto"};
+        private static readonly string[] PlayerNames = { "Nils", "Kåre", "Geir", "Otto" };
         private static int _nameIndex = 0;
 
         public static Player CreatePlayer()

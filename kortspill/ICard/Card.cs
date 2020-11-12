@@ -3,33 +3,18 @@
     internal class Card : ICard
 
     {
-        private readonly CardValue _cardValue;
-        private readonly CardType _cardType; 
+        public CardValue CardValue { get; }
+        public CardType CardType { get; set; }
+        public string SpecialRule { get; set; } = null;
 
         public Card(CardValue cardValue)
         {
-            _cardValue = cardValue;
+            CardValue = cardValue;
         }
 
-        public string getCardName()
+        public string GetCardName()
         {
-            return _cardValue + " of " + getType();
-        }
-
-
-        public CardType getType()
-        {
-            return _cardType;
-        }
-
-        public string SpecialRule()
-        {
-            return "No special rule";
-        }
-
-        public CardValue getValue()
-        {
-            return _cardValue;
+            return CardValue + " of " + CardType;
         }
     }
 }

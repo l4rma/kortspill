@@ -15,5 +15,10 @@ namespace kortspill
         {
             GameManager.Init();
         }
+        //Notes:
+        //bug: Can have multiple winners
+        //Should players receive/discards cards after winner is declared?
+        //Should players be able to draw before previous player discarded card?
+        //Add more ascii "art"?
     }
 }
