@@ -1,91 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
 namespace kortspill
 {
-    class GameManager
+    internal class GameManager
     {
-        private static List<Thread> threads = new List<Thread>();
-        private static List<Player> players = new List<Player>();
-        private object _lock;
-        public static bool gameOver = false;
+        private static readonly List<Thread> Threads = new List<Thread>();
+        private static readonly List<Player> Players = new List<Player>();
+        public static bool GameOver = false;
 
-        public static void endGame()
+        public static void EndGame()
         {
-            gameOver = true;
+            GameOver = true;
 
             Thread.Sleep(1000);
 
-            printWinner();
+            PrintWinner();
         }
 
-        private static void printWinner()
+        private static void PrintWinner()
         {
             Console.WriteLine(" ");
 
-            foreach (Player player in players)
+            foreach (var player in Players.Where(player => player.Winner))
             {
-                if (player.winner)
+                Console.WriteLine("|--------------------|");
+                Console.WriteLine("| " + player.GetName() + " won the game! |");
+                Console.WriteLine("|--------------------|");
+                Console.WriteLine();
+                Console.WriteLine("Winning hand:");
+                foreach (var card in player.GetHand())
                 {
-                    Console.WriteLine("|-----------------|");
-                    Console.WriteLine("|-" + player.getName() + " won the game!-|");
-                    Console.WriteLine("|-----------------|");
-                    Console.WriteLine();
-                    Console.WriteLine("Winning hand:");
-                    foreach (Card card in player.getHand())
-                    {
-                        Console.WriteLine("-" + card.getCardName());
-                    }
-
+                    Console.WriteLine("-" + card.getCardName());
                 }
             }
         }
         public void Init()
         {
-            Deck deck = new Deck();
-            string input = null;
-            int num = -1;
-            while (!int.TryParse(input, out num)) // Check if input is int
+            var dealer = new Dealer();
+            var numberOfPlayers = -1;
+            while (numberOfPlayers == -1)
             {
-                Console.Clear();
-                Console.WriteLine("How many players?");
-                input = Console.ReadLine();
+                numberOfPlayers = GetNumberOfPlayers();
             }
             Console.Clear();
-            createPlayers(num);
-            createThreads(num);
-            startThreads(num);
+            CreatePlayers(numberOfPlayers);
+            CreateThreads(numberOfPlayers);
+            StartThreads(numberOfPlayers);
         }
 
-        private void createPlayers(int num)
+        private static int GetNumberOfPlayers()
+        {
+            Console.Clear();
+            Console.WriteLine("How many players?");
+            var input = Console.ReadLine();
+
+            if (!int.TryParse(input, out var num))
+            {
+                Console.WriteLine("You must write a number");
+                Thread.Sleep(1500);
+            }
+            else
+            {
+                if (num > 4 || num < 2)
+                {
+                    Console.WriteLine("You must choose between 2-4");
+                    Thread.Sleep(1500);
+                    return -1;
+                }
+                return num;
+            }
+
+            return -1;
+        }
+
+        private static void CreatePlayers(int num)
         {
             //Create players
-            for (int i = 0; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
-                players.Add(PlayerFactory.CreatePlayer());
+                Players.Add(PlayerFactory.CreatePlayer());
 
             }
         }
-        private void createThreads(int num)
+        private static void CreateThreads(int num)
         {
             //Create threads
-            for (int i = 0; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
-                threads.Add(new Thread(new ThreadStart(players[i].play)));
+                Threads.Add(new Thread(new ThreadStart(Players[i].Play)));
             }
         }
-        private void startThreads(int num)
+        private static void StartThreads(int num)
         {
             //Start threads
-            for (int i = 0; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
-                threads[i].Start();
+                Threads[i].Start();
             }
         }
-
-
     }
 }

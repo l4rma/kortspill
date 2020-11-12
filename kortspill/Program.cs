@@ -7,12 +7,13 @@ using System.Threading;
 
 namespace kortspill
 {
-    class Program
+    internal class Program
     { 
-        private static GameManager gm = new GameManager();
-        static void Main(string[] args )
+        private static readonly GameManager GameManager = new GameManager();
+
+        private static void Main(string[] args )
         {
-            gm.Init();
+            GameManager.Init();
         }
     }
 }

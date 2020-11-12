@@ -2,12 +2,14 @@
 
 namespace kortspill
 {
-    internal interface ICard
+    public interface ICard
     {
         public string getCardName();
-        
-        public string getValue();
 
         public CardType getType();
+
+        public string SpecialRule();
+
+        public CardValue getValue();
     }
 }

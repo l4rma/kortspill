@@ -1,109 +1,95 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading;
 
+
 namespace kortspill
 {
-    class Player : IPlayer
+    internal class Player : IPlayer
     {
-        public List<Card> hand = new List<Card>();
-        private int name;
-        public bool winner = false;
+        private readonly List<ICard> _hand = new List<ICard>();
+        private readonly string _name;
+        public bool Winner = false;
 
-        public Player(int name)
+        public Player(string name)
         {
-            this.name = name;
+            this._name = name;
         }
 
-        public void play()
+        public void Play()
         {
-            while (!GameManager.gameOver)
+            while (!GameManager.GameOver)
             //for(int i = 0; i<5; i++)
             {
-                requestCard();
+                RequestCard();
                 //checkForSpecialCards();
-                discardCard(whatToGiveAway());
-                checkForWin();
+                DiscardCard(WhatToGiveAway());
+                CheckForWin();
                 Thread.Sleep(100);
 
             }
 
         }
 
-        private Card whatToGiveAway()
+        private ICard WhatToGiveAway()
         {
-            foreach (Card card in hand)
-            {
-                if (count(card.getType()) < 2)
-                {
-                    return card;
-                }
-            }
-            return hand[0];
+            foreach (var card in _hand.Where(card => Count(card.getType()) < 2))
+                return card;
+
+            return _hand[0];
         }
 
-        private void checkForWin()
+        private void CheckForWin()
         {
-            if (count(CardType.Spades) > 3 || count(CardType.Diamonds) > 3 || count(CardType.Hearts) > 3 || count(CardType.Clubs) > 3)
-            {
-                winner = true;
-                GameManager.endGame();
-            }
-            
+            //change to switch statement?
+            if (Count(CardType.Spades) <= 3 && Count(CardType.Diamonds) <= 3 && Count(CardType.Hearts) <= 3 &&
+                Count(CardType.Clubs) <= 3) return;
+            Winner = true;
+            GameManager.EndGame();
+
         }
 
-        private int count(CardType cardtype)
+        private int Count(CardType cardType)
         {
-            int amount = 0;
-            foreach (Card card in hand)
-            {
-                if (card.getType() == cardtype)
-                {
-                    amount++;
-                }
-                
-            }
-
-            return amount;
+            return _hand.Count(card => card.getType() == cardType);
         }
 
-        private void checkForSpecialCards()
+        private void CheckForSpecialCards()
         {
             throw new NotImplementedException();
         }
 
 
-        public void requestCard()
+        public void RequestCard()
         {
-            Deck.DealTopCard(this);
+            Dealer.DealTopCard(this);
         }
 
-        public void discardCard(Card card)
+        public void DiscardCard(ICard card)
         {
-            if (getHandSize() > 4)
-            {
-                Deck.deck.Add(card);
-                Console.WriteLine(this.getName() + " discarded " + card.getCardName());
-                hand.Remove(card);
-            }
+            if (GetHandSize() <= 4) return;
+            Dealer.Deck.Add(card);
+            Console.WriteLine(this.GetName() + " discarded " + card.getCardName());
+            _hand.Remove(card);
         }
 
-        public List<Card> getHand()
+        public List<ICard> GetHand()
         {
-            return hand;
+            return _hand;
         }
 
-        public int getName()
+        public string GetName()
         {
-            return this.name;
+            return this._name;
         }
 
-        public int getHandSize()
+        public int GetHandSize()
         {
-            return hand.Count;
+            return _hand.Count;
         }
     }
 }

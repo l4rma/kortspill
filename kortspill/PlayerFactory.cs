@@ -4,13 +4,16 @@ using System.Text;
 
 namespace kortspill
 {
-    class PlayerFactory
+    internal class PlayerFactory
     {
-        private static int nameId; 
+
+        private static string[] PlayerNames = { "Nils", "Kåre", "Geir", "Otto"};
+        private static int _nameIndex = 0;
+
         public static Player CreatePlayer()
         {
-            nameId++;
-            return new Player(nameId);
+            _nameIndex++;
+            return new Player(PlayerNames[_nameIndex-1]);
         }
     }
 }

@@ -5,10 +5,10 @@ using System.Text;
 
 namespace kortspill
 {
-    interface IPlayer
+    internal interface IPlayer
     {
-        public void requestCard();
-        public void discardCard(Card card);
-        public List<Card> getHand();
+        public void RequestCard();
+        public void DiscardCard(ICard card);
+        public List<ICard> GetHand();
     }
 }
