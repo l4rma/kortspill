@@ -4,6 +4,7 @@ using System.Text;
 
 namespace kortspill
 {
+    //INFO: Decorator Design Pattern
     internal class DiamondsDecorator : CardDecorator
     {
         public DiamondsDecorator(ICard card)

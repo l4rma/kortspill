@@ -22,7 +22,7 @@ namespace kortspill
             ConsoleLog.PrintWinner();
         }
 
-        public void Init()
+        public void Init() //INFO: Facade Pattern
         {
             var dealer = new Dealer();
 
@@ -157,7 +157,7 @@ namespace kortspill
                     break;
                 case "the Vulture":
                     Console.WriteLine("Hand size increased by 1, receive an extra card.");
-                    player.MaxHandSize = player.MaxHandSize+1;
+                    player.MaxHandSize++;
                     Dealer.DealTopCard(player);
                     break;
                 case "the Quarantine":
@@ -189,11 +189,7 @@ namespace kortspill
         {
             if (HasWinningHand(player))
             {
-                if (GameOver) // Check if someone won just before you
-                {
-                    Console.WriteLine(player.Name + " also got a winning hand, but it was too late..."); //TODO:kan fjernes?
-                    return;
-                }
+                if (GameOver) return; //TODO: Kan fjernes?
 
                 player.Winner = true;
                 

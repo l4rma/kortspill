@@ -15,23 +15,24 @@ namespace kortspill
     {
         public List<ICard> Hand { get; } = new List<ICard>();
         public string Name { get; }
+
         public bool Winner = false;
-        public int MaxHandSize = 4;
+        public int MaxHandSize = HandSize.GetState().Max;  // Singleton in action TODO: Ikker riktig implementert.
         public bool IsQuarantined { get; set; } = false;
+        public int ExtraCards { get; set; } = 0;
 
         public Player(string name)
         {
             Name = name;
         }
 
-        public void Play()
+        public void Play() //INFO: Facade Design Pattern
         {
-            while (!GameManager.GameOver)
+            while (!GameManager.GameOver) 
             {
                 RequestCard();
                 DiscardUnwantedCard(WhatToGiveAway());
-                GameManager.CheckIfWinner(this); //TODO: ITS NOT WORKING! FIX IT!
-                //Thread.Sleep(1000); Wait before drawing again
+                GameManager.CheckIfWinner(this);
             }
         }
 
@@ -78,7 +79,6 @@ namespace kortspill
             {
                 if (card.Suit == cardType) num++;
             }
-            //return _hand.Count(card => card.Suit == cardType);
             return num;
         }
 
@@ -89,7 +89,7 @@ namespace kortspill
 
         public void DiscardUnwantedCard(ICard card)
         {
-            if (Hand.Count <= MaxHandSize) return;
+            if (Hand.Count <= MaxHandSize + ExtraCards) return;
             Dealer.Deck.Add(card);
             Console.WriteLine(Name + " discarded " + card.GetCardName());
             Hand.Remove(card);

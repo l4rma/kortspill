@@ -44,14 +44,6 @@ namespace kortspill
             return deck;
         }
 
-        public void List()
-        {
-            foreach (var card in Deck)
-            {
-                Console.WriteLine(card.GetCardName());
-            }
-        }
-
         public static void AcceptCardRequest(Player player)
         {
             lock (Lock)
@@ -73,12 +65,11 @@ namespace kortspill
         public static void DealTopCard(Player player)
         {
             ICard card = Deck[0];                // Card to deal
-            if (GameManager.GameOver) return;
-            player.Hand.Add(card);          // Give card to player
+            if (GameManager.GameOver) return;    // Stop other players from getting more cards after someone wins
+            player.Hand.Add(card);               // Give card to player
             Deck.RemoveAt(0);               // Remove card from dealer
             Console.WriteLine(player.Name + " received " + card.GetCardName()); 
             GameManager.CheckCard(player, card); // Check if card has a special rule
-            //GameManager.CheckIfWinner(player);   // Check if player won
         }
 
         public static void DealStartingHands()
@@ -110,18 +101,13 @@ namespace kortspill
         public static ICard ReturnRandomCardFromDeck()
         {
             var rnd = new Random();
-            ICard card = Deck[rnd.Next(GetDeckCount())];
+            ICard card = Deck[rnd.Next(Deck.Count)];
             while (card.SpecialRule != null)
             {
                 rnd = new Random();
-                card = Deck[rnd.Next(GetDeckCount())];
+                card = Deck[rnd.Next(Deck.Count)];
             }
             return card;
-        }
-
-        public static int GetDeckCount()
-        {
-            return Deck.Count;
         }
     }
 }

@@ -19,17 +19,19 @@ namespace kortspill
         }
         //Bug/TODO:
         //Can have multiple winners. Fixed!
-        //bug: If you got 3 spades, one of which being "the Joker", you will still win!
-        //Should players receive/discards cards after winner is declared?
-        //Should players be able to draw before previous player discarded card?
+        //If you got 3 spades, one of which being "the Joker", you will still win! Fixed!
+        //Should players receive/discards cards after winner is declared? No. Fixed!
+        //Should players be able to draw before previous player discarded card? No. Fixed!
         //Add more/less ascii "art"?
-        //should player wins before discarding? now discards after win.. ..now not..
+        //should player wins before discarding? now discards after win.. ..now not.. No discarding after win. Fixed!
         // Fix discard algorithm! Fixed! :D
-        //TODO: Change name Suit to Suit
+        // Change name CardType to Suit. Fixed
         //TODO: Override operator?
-        //TODO: Fix lock and sleep placement. Fixed? Yes, i think so.
+        // Fix lock and sleep placement. Fixed? Yes, i think so. Fixed!
         //TODO: Implement at least one more Pattern and/or confirm singleton and flyweight
+        // Singleton: Object MaxHandSize;
         //Hvis player.hand er composit pattern, bruke det for å discarde kortet man har færrest av?
+        //Nevn i oppgave: Visual Studio vil ha properties uten fields, "auto properties". 
 
         /* For testing discarding
          
