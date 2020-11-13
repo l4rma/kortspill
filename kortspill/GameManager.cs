@@ -20,15 +20,12 @@ namespace kortspill
         {
             GameOver = true;
 
-            Thread.Sleep(1000);
-
             PrintWinner();
         }
 
         private static void PrintWinner()
         {
-            Console.WriteLine(" ");
-
+            Console.WriteLine();
             foreach (var player in Players.Where(player => player.Winner))
             {
                 Console.WriteLine("|--------------------|");
@@ -77,7 +74,8 @@ namespace kortspill
             {
                 AddRuleToCard(rules[i]);
             }
-            
+
+            Console.WriteLine();
         }
 
         private static void AddRuleToCard(string rule)
@@ -145,7 +143,8 @@ namespace kortspill
                 Players.Add(PlayerFactory.CreatePlayer());
                 Console.WriteLine("- " + Players[i].GetName());
             }
-            
+
+            Console.WriteLine();
         }
         private static void CreateThreads(int num)
         {
@@ -214,7 +213,14 @@ namespace kortspill
         {
             if (HasWinningHand(player))
             {
+                if (GameOver) // Check if someone won just before you
+                {
+                    Console.WriteLine(player.GetName() + " also got a winning hand, but it was too late...");
+                    return;
+                }
+
                 player.Winner = true;
+                
                 GameManager.EndGame();
             }
         }
@@ -223,7 +229,7 @@ namespace kortspill
         {
             int sameSuitNeeded = 4;
             foreach (var card in player.GetHand().Where(card => card.SpecialRule == "the Joker")) sameSuitNeeded--;
-
+            //TODO: Fix properly
             return player.Count(CardType.Spades) >= sameSuitNeeded || player.Count(CardType.Diamonds) >= sameSuitNeeded || player.Count(CardType.Hearts) >= sameSuitNeeded ||
                    player.Count(CardType.Clubs) >= sameSuitNeeded;
         }

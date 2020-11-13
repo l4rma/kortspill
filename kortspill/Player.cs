@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 
 
 namespace kortspill
@@ -31,26 +32,43 @@ namespace kortspill
                 RequestCard();
                 DiscardUnwantedCard(WhatToGiveAway());
                 GameManager.CheckIfWinner(this); //TODO: ITS NOT WORKING! FIX IT!
-                Thread.Sleep(50);
+                //Thread.Sleep(1000); Wait before drawing again
             }
         }
 
         private ICard WhatToGiveAway() //TODO: ITS NOT WORKING! FIX IT!
         {
-            var cardToReturn = _hand[0];
-            var tempList = _hand
-                .OrderBy(ICard => ICard.SpecialRule == "the Joker") // Sett Jokern sist
-                .ThenByDescending(ICard => ICard.CardType.ToString());
+            /* Console log hands before discarding
+            Console.WriteLine("Hand:");
             foreach (var card in _hand)
             {
-                if (card.GetCardName() == tempList.First().GetCardName())
+                Console.WriteLine(card.GetCardName());
+            }
+            */
+            
+            var sorted = _hand
+                .GroupBy(x => x.SpecialRule == "the Joker")
+                .Select(x => new
                 {
-                    cardToReturn = card;
+                    Cards = x.GroupBy(c => c.CardType).OrderBy(c => c.Count()),
+                    Count = x.Count(),
+                })
+                .OrderByDescending(x => x.Count)
+                .SelectMany(x => x.Cards);
+            foreach (var card in _hand)
+            {
+                if (card.CardType == sorted.First().Key)
+                {
+                    /* Checking what card to give away
+                     * Console.WriteLine("\nwhat to give away: " + card.GetCardName());
+                     */
+                    return card;
                 }
-
             }
 
-            return cardToReturn;
+            // Should never go here but Visual Studio don't believe me... 
+            Console.WriteLine("Error: Can't find card to discard, discarding first card in hand..");
+            return _hand[0];
         }
 
 

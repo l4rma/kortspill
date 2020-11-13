@@ -56,7 +56,8 @@ namespace kortspill
         {
             lock (Lock)
             {
-                Thread.Sleep(100); // Adjust the draw rhythm
+                
+                Thread.Sleep(500); // Adjust the draw rhythm
                 if (player.IsQuarantined)
                 {
                     Console.WriteLine(player.GetName() + " requested a card, but is Quarantined!");
@@ -72,6 +73,7 @@ namespace kortspill
         public static void DealTopCard(Player player)
         {
             ICard card = Deck[0];                // Card to deal
+            if (GameManager.GameOver) return;
             player.GetHand().Add(card);          // Give card to player
             Deck.RemoveAt(0);               // Remove card from dealer
             Console.WriteLine(player.GetName() + " received " + card.GetCardName()); 
@@ -100,11 +102,12 @@ namespace kortspill
             {
                 Console.WriteLine("- " + card.GetCardName());
             }
-
+            Console.WriteLine();
+            //Thread.Sleep(2000); Pause for readability
             CheckStarterHand(player);
         }
 
-        private static void CheckStarterHand(Player player)
+        private static void CheckStarterHand(Player player) // Flytt til gm
         {
             if (GameManager.HasWinningHand(player))
             {
