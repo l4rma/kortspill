@@ -9,6 +9,7 @@ namespace kortspill
         Clubs,
         Diamonds,
         Hearts,
-        Spades
+        Spades,
+        Joker
     }
 }

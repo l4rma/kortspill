@@ -14,6 +14,7 @@
 
         public string GetCardName()
         {
+            if(SpecialRule != null) return CardValue + " of " + CardType + " (" + SpecialRule + ")";
             return CardValue + " of " + CardType;
         }
     }

@@ -16,6 +16,7 @@ namespace kortspill
         private readonly string _name;
         public bool Winner = false;
         private int _maxHandSize = 4;
+        private readonly object _lock = new object();
         public bool IsQuarantined { get; set; } = false;
 
         public Player(string name)
@@ -26,41 +27,34 @@ namespace kortspill
         public void Play()
         {
             while (!GameManager.GameOver)
-            //for(int i = 0; i<5; i++)
             {
                 RequestCard();
                 DiscardUnwantedCard(WhatToGiveAway());
-                CheckForWin(); // TODO: FLytt til GameManager
-                Thread.Sleep(500);
-
+                GameManager.CheckIfWinner(this); //TODO: ITS NOT WORKING! FIX IT!
+                Thread.Sleep(50);
             }
-
         }
 
-        private ICard WhatToGiveAway()
+        private ICard WhatToGiveAway() //TODO: ITS NOT WORKING! FIX IT!
         {
-            foreach (var card in _hand.Where(card => Count(card.CardType) < 2))
-                return card;
-
-            return _hand[0];
-        }
-
-        private void CheckForWin()
-        {
-            if (HasWinningHand())
+            var cardToReturn = _hand[0];
+            var tempList = _hand
+                .OrderBy(ICard => ICard.SpecialRule == "the Joker") // Sett Jokern sist
+                .ThenByDescending(ICard => ICard.CardType.ToString());
+            foreach (var card in _hand)
             {
-                Winner = true;
-                GameManager.EndGame();
+                if (card.GetCardName() == tempList.First().GetCardName())
+                {
+                    cardToReturn = card;
+                }
+
             }
+
+            return cardToReturn;
         }
 
-        public bool HasWinningHand()
-        {
-            return Count(CardType.Spades) > 3 || Count(CardType.Diamonds) > 3 || Count(CardType.Hearts) > 3 ||
-                   Count(CardType.Clubs) > 3;
-        }
 
-        private int Count(CardType cardType)
+        public int Count(CardType cardType)
         {
             return _hand.Count(card => card.CardType == cardType);
         }
