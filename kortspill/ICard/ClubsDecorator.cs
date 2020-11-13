@@ -9,7 +9,7 @@ namespace kortspill
         public ClubsDecorator(ICard card)
             : base(card)
         {
-            CardType = CardType.Clubs;
+            Suit = Suit.Clubs;
         }
     }
 }

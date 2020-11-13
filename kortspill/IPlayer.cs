@@ -10,6 +10,6 @@ namespace kortspill
         public bool IsQuarantined { get; set; }
         public void RequestCard();
         public void DiscardUnwantedCard(ICard card);
-        public List<ICard> GetHand();
+        public List<ICard> Hand { get; }
     }
 }

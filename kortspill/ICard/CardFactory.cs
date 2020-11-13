@@ -6,21 +6,21 @@ namespace kortspill
 {
     internal class CardFactory
     {
-        public static ICard CreateCard(CardValue value, CardType type)
+        public static ICard CreateCard(Value value, Suit type)
         {
             ICard card;
             switch (type)
             {
-                case CardType.Spades:
+                case Suit.Spades:
                     card = new SpadesDecorator(new Card(value));
                     break;
-                case CardType.Clubs:
+                case Suit.Clubs:
                     card = new ClubsDecorator(new Card(value));
                     break;
-                case CardType.Hearts:
+                case Suit.Hearts:
                     card = new HeartsDecorator(new Card(value));
                     break;
-                case CardType.Diamonds:
+                case Suit.Diamonds:
                     card = new DiamondsDecorator(new Card(value));
                     break;
                 default:

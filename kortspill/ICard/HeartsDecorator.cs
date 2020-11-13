@@ -9,7 +9,7 @@ namespace kortspill
         public HeartsDecorator(ICard card)
             : base(card)
         {
-            CardType = CardType.Hearts;
+            Suit = Suit.Hearts;
         }
     }
 }

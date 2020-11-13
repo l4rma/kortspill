@@ -4,8 +4,8 @@ namespace kortspill
 {
     public interface ICard
     {
-        CardType CardType { get; set; }
-        CardValue CardValue { get; }
+        Suit Suit { get; set; }
+        Value Value { get; }
         string SpecialRule { get; set; }
         public string GetCardName();
 

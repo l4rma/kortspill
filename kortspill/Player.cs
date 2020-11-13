@@ -13,16 +13,15 @@ namespace kortspill
 {
     internal class Player : IPlayer
     {
-        private readonly List<ICard> _hand = new List<ICard>();
-        private readonly string _name;
+        public List<ICard> Hand { get; } = new List<ICard>();
+        public string Name { get; }
         public bool Winner = false;
-        private int _maxHandSize = 4;
-        private readonly object _lock = new object();
+        public int MaxHandSize = 4;
         public bool IsQuarantined { get; set; } = false;
 
         public Player(string name)
         {
-            this._name = name;
+            Name = name;
         }
 
         public void Play()
@@ -46,18 +45,18 @@ namespace kortspill
             }
             */
             
-            var sorted = _hand
+            var sorted = Hand
                 .GroupBy(x => x.SpecialRule == "the Joker")
                 .Select(x => new
                 {
-                    Cards = x.GroupBy(c => c.CardType).OrderBy(c => c.Count()),
+                    Cards = x.GroupBy(c => c.Suit).OrderBy(c => c.Count()),
                     Count = x.Count(),
                 })
                 .OrderByDescending(x => x.Count)
                 .SelectMany(x => x.Cards);
-            foreach (var card in _hand)
+            foreach (var card in Hand)
             {
-                if (card.CardType == sorted.First().Key)
+                if (card.Suit == sorted.First().Key)
                 {
                     /* Checking what card to give away
                      * Console.WriteLine("\nwhat to give away: " + card.GetCardName());
@@ -68,13 +67,19 @@ namespace kortspill
 
             // Should never go here but Visual Studio don't believe me... 
             Console.WriteLine("Error: Can't find card to discard, discarding first card in hand..");
-            return _hand[0];
+            return Hand[0];
         }
 
 
-        public int Count(CardType cardType)
+        public int Count(Suit cardType)
         {
-            return _hand.Count(card => card.CardType == cardType);
+            int num = 0;
+            foreach (var card in Hand.Where(c => c.SpecialRule != "the Joker"))
+            {
+                if (card.Suit == cardType) num++;
+            }
+            //return _hand.Count(card => card.Suit == cardType);
+            return num;
         }
 
         public void RequestCard()
@@ -84,45 +89,17 @@ namespace kortspill
 
         public void DiscardUnwantedCard(ICard card)
         {
-            if (GetHandSize() <= _maxHandSize) return;
+            if (Hand.Count <= MaxHandSize) return;
             Dealer.Deck.Add(card);
-            Console.WriteLine(this.GetName() + " discarded " + card.GetCardName());
-            _hand.Remove(card);
+            Console.WriteLine(Name + " discarded " + card.GetCardName());
+            Hand.Remove(card);
         }
 
         public void DiscardHand()
         {
-            foreach (var card in _hand)
-            {
-                Dealer.Deck.Add(card);
-            }
-            _hand.Clear();
-            Console.WriteLine(this.GetName() + " discards all cards from hand.");
-        }
-
-        public List<ICard> GetHand()
-        {
-            return _hand;
-        }
-
-        public string GetName()
-        {
-            return this._name;
-        }
-
-        public int GetHandSize()
-        {
-            return _hand.Count;
-        }
-
-        public void SetMaxHandSize(int maxHandSize)
-        {
-            _maxHandSize = maxHandSize;
-        }
-
-        public int GetMaxHandSize()
-        {
-            return _maxHandSize;
+            foreach (var card in Hand) Dealer.Deck.Add(card);
+            Hand.Clear();
+            Console.WriteLine(Name + " discards all cards from hand.");
         }
     }
 }

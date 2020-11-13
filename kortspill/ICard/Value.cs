@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kortspill
 {
-    public enum CardValue
+    public enum Value
     {
         Two,
         Three,

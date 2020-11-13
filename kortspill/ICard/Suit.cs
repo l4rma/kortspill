@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kortspill
 {
-    public enum CardType
+    public enum Suit
     {
         Clubs,
         Diamonds,

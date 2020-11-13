@@ -3,19 +3,19 @@
     internal class Card : ICard
 
     {
-        public CardValue CardValue { get; }
-        public CardType CardType { get; set; }
+        public Value Value { get; }
+        public Suit Suit { get; set; }
         public string SpecialRule { get; set; } = null;
 
-        public Card(CardValue cardValue)
+        public Card(Value value)
         {
-            CardValue = cardValue;
+            Value = value;
         }
 
         public string GetCardName()
         {
-            if(SpecialRule != null) return CardValue + " of " + CardType + " (" + SpecialRule + ")";
-            return CardValue + " of " + CardType;
+            if(SpecialRule != null) return Value + " of " + Suit + " (" + SpecialRule + ")";
+            return Value + " of " + Suit;
         }
     }
 }

@@ -14,31 +14,14 @@ namespace kortspill
         private static readonly List<Thread> Threads = new List<Thread>();
         private static readonly List<Player> Players = new List<Player>();
         public static bool GameOver = false;
-        private static readonly object Lock = new object();
 
         public static void EndGame()
         {
             GameOver = true;
 
-            PrintWinner();
+            ConsoleLog.PrintWinner();
         }
 
-        private static void PrintWinner()
-        {
-            Console.WriteLine();
-            foreach (var player in Players.Where(player => player.Winner))
-            {
-                Console.WriteLine("|--------------------|");
-                Console.WriteLine("| " + player.GetName() + " won the game! |");
-                Console.WriteLine("|--------------------|");
-                Console.WriteLine();
-                Console.WriteLine("Winning hand:");
-                foreach (var card in player.GetHand())
-                {
-                    Console.WriteLine("-" + card.GetCardName());
-                }
-            }
-        }
         public void Init()
         {
             var dealer = new Dealer();
@@ -52,10 +35,8 @@ namespace kortspill
             // Make 4 random cards remaining in the deck special
             MakeSpecialCards();
 
-            Console.WriteLine("|-----------------------------------|");
-            Console.WriteLine("| The Game will begin in 3 seconds! |");
-            Console.WriteLine("|-----------------------------------|");
-            Console.WriteLine();
+            ConsoleLog.TextBox("The Game will begin in 3 seconds!");
+
             Thread.Sleep(3000);
 
             CreateThreads(numberOfPlayers);
@@ -65,17 +46,13 @@ namespace kortspill
 
         private void MakeSpecialCards()
         {
-            Console.WriteLine("|-------------------------------------|");
-            Console.WriteLine("| Cards with special rules this game: |");
-            Console.WriteLine("|-------------------------------------|");
+            ConsoleLog.TextBox("Cards with special rules this game:");
 
             string[] rules = {"the Bomb", "the Quarantine", "the Joker", "the Vulture"};
             for (var i = 0; i < 4; i++)
             {
                 AddRuleToCard(rules[i]);
             }
-
-            Console.WriteLine();
         }
 
         private static void AddRuleToCard(string rule)
@@ -88,23 +65,21 @@ namespace kortspill
         private static int ReturnUserInput()
         {
             Console.Clear();
-            WelcomeMessage();
-            Console.WriteLine("|-------------------|");
-            Console.WriteLine("| How many players? |");
-            Console.WriteLine("|-------------------|");
+            ConsoleLog.TextBox("Welcome to 4 of a Kind - Thread Battle Card Rush");
+            ConsoleLog.TextBox("How many players?");
             var input = Console.ReadLine();
 
             // Check if user input is valid
             if (!int.TryParse(input, out var num))
             {
-                Console.WriteLine("You must write a number");
+                ConsoleLog.TextBox("You must write a number");
                 Thread.Sleep(1500);
             }
             else
             {
                 if (num > 4 || num < 2)
                 {
-                    Console.WriteLine("You must choose between 2-4");
+                    ConsoleLog.TextBox("You must choose between 2-4");
                     Thread.Sleep(1500);
                     return -1;
                 }
@@ -112,13 +87,6 @@ namespace kortspill
             }
 
             return -1;
-        }
-
-        private static void WelcomeMessage()
-        {
-            Console.WriteLine("|--------------------------------------------------|");
-            Console.WriteLine("| Welcome to 4 of a Kind - Thread Battle Card Rush |");
-            Console.WriteLine("|--------------------------------------------------|");
         }
 
         private static int ReturnNumberOfPlayers()
@@ -134,17 +102,13 @@ namespace kortspill
 
         private static void CreatePlayers(int num)
         {
-            Console.WriteLine("|--------------------|");
-            Console.WriteLine("| Players this game: |");
-            Console.WriteLine("|--------------------|");
+            ConsoleLog.TextBox("Players this game:");
             //Create players
             for (var i = 0; i < num; i++)
             {
                 Players.Add(PlayerFactory.CreatePlayer());
-                Console.WriteLine("- " + Players[i].GetName());
+                Console.WriteLine("- " + Players[i].Name);
             }
-
-            Console.WriteLine();
         }
         private static void CreateThreads(int num)
         {
@@ -178,12 +142,12 @@ namespace kortspill
 
         private static void ExecuteRule(Player player, ICard card)
         {
-            Console.WriteLine("\n"+ player.GetName() + " reads rules: ");
+            Console.WriteLine("\n"+ player.Name + " reads rules: ");
             Console.WriteLine("This card is " + card.SpecialRule + "!");
             switch (card.SpecialRule)
             {
                 case "the Bomb":
-                    Console.WriteLine("Discard all cards, and receive 4 new cards.\n");
+                    Console.WriteLine("Discard all cards, and receive 4 new cards.");
                     
                     player.DiscardHand();
                     for (int i = 0; i < 4; i++)
@@ -192,20 +156,32 @@ namespace kortspill
                     }
                     break;
                 case "the Vulture":
-                    Console.WriteLine("Hand size increased by 1, receive an extra card.\n");
-                    player.SetMaxHandSize(player.GetMaxHandSize()+1);
+                    Console.WriteLine("Hand size increased by 1, receive an extra card.");
+                    player.MaxHandSize = player.MaxHandSize+1;
                     Dealer.DealTopCard(player);
                     break;
                 case "the Quarantine":
-                    Console.WriteLine("You will not receive a card on you next card request\n");
+                    Console.WriteLine("You will not receive a card on you next card request");
                     player.IsQuarantined = true;
                     break;
                 case "the Joker":
-                    Console.WriteLine("It will serve as all card types\n");
+                    Console.WriteLine("It will serve as all card types");
                     break;
                 default:
                     Console.WriteLine("Error: no matching rule name");
                     break;
+            }
+            Console.WriteLine();
+        }
+
+        public static void CheckStarterHand(Player player)
+        {
+            if (GameManager.HasWinningHand(player))
+            {
+                Console.WriteLine(player.Name + " was dealt a winning hand,");
+                Console.WriteLine("which is not a legal starting hand.");
+                player.DiscardHand();
+                Dealer.Deal4CardsToPlayer(player);
             }
         }
 
@@ -215,7 +191,7 @@ namespace kortspill
             {
                 if (GameOver) // Check if someone won just before you
                 {
-                    Console.WriteLine(player.GetName() + " also got a winning hand, but it was too late...");
+                    Console.WriteLine(player.Name + " also got a winning hand, but it was too late..."); //TODO:kan fjernes?
                     return;
                 }
 
@@ -228,10 +204,11 @@ namespace kortspill
         public static bool HasWinningHand(Player player)
         {
             int sameSuitNeeded = 4;
-            foreach (var card in player.GetHand().Where(card => card.SpecialRule == "the Joker")) sameSuitNeeded--;
+            foreach (var card in player.Hand.Where(card => card.SpecialRule == "the Joker")) sameSuitNeeded--;
+
             //TODO: Fix properly
-            return player.Count(CardType.Spades) >= sameSuitNeeded || player.Count(CardType.Diamonds) >= sameSuitNeeded || player.Count(CardType.Hearts) >= sameSuitNeeded ||
-                   player.Count(CardType.Clubs) >= sameSuitNeeded;
+            return player.Count(Suit.Spades) >= sameSuitNeeded || player.Count(Suit.Diamonds) >= sameSuitNeeded || player.Count(Suit.Hearts) >= sameSuitNeeded ||
+                   player.Count(Suit.Clubs) >= sameSuitNeeded;
         }
     }
 }

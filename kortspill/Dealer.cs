@@ -17,12 +17,12 @@ namespace kortspill
         public Dealer()
         {
             // Fill deck with cards
-            foreach (CardType type in Enum.GetValues(typeof(CardType)))
+            foreach (Suit type in Enum.GetValues(typeof(Suit)))
             {
-                if (type == CardType.Joker) continue;
-                foreach (Enum value in Enum.GetValues(typeof(CardValue)))
+                if (type == Suit.Joker) continue;
+                foreach (Enum value in Enum.GetValues(typeof(Value)))
                 {
-                    Deck.Add(CardFactory.CreateCard((CardValue) value, (CardType) type));
+                    Deck.Add(CardFactory.CreateCard((Value) value, (Suit) type));
                 }
             }
             // Mix up the order of the cards in the deck
@@ -57,11 +57,11 @@ namespace kortspill
             lock (Lock)
             {
                 
-                Thread.Sleep(500); // Adjust the draw rhythm
+                Thread.Sleep(100); // Adjust the draw rhythm
                 if (player.IsQuarantined)
                 {
-                    Console.WriteLine(player.GetName() + " requested a card, but is Quarantined!");
-                    Console.WriteLine("He did not receive a card, but it no longer in Quarantine.");
+                    Console.WriteLine("\n" + player.Name + " requested a card, but is Quarantined!\n" +
+                                      "He did not receive a card, but it no longer in Quarantine.\n");
                     player.IsQuarantined = false;
                     return;
                 }
@@ -74,9 +74,9 @@ namespace kortspill
         {
             ICard card = Deck[0];                // Card to deal
             if (GameManager.GameOver) return;
-            player.GetHand().Add(card);          // Give card to player
+            player.Hand.Add(card);          // Give card to player
             Deck.RemoveAt(0);               // Remove card from dealer
-            Console.WriteLine(player.GetName() + " received " + card.GetCardName()); 
+            Console.WriteLine(player.Name + " received " + card.GetCardName()); 
             GameManager.CheckCard(player, card); // Check if card has a special rule
             //GameManager.CheckIfWinner(player);   // Check if player won
         }
@@ -89,33 +89,22 @@ namespace kortspill
             }
         }
 
-        private static void Deal4CardsToPlayer(Player player)
+        public static void Deal4CardsToPlayer(Player player)
         {
             for (int i = 0; i < 4; i++)
             {
-                player.GetHand().Add(Deck[0]);
+                player.Hand.Add(Deck[0]);
                 Deck.RemoveAt(0);
             }
 
-            Console.WriteLine(player.GetName() + " gets 4 cards");
-            foreach (var card in player.GetHand())
+            ConsoleLog.TextBox(player.Name + " gets 4 cards");
+            foreach (var card in player.Hand)
             {
                 Console.WriteLine("- " + card.GetCardName());
             }
             Console.WriteLine();
             //Thread.Sleep(2000); Pause for readability
-            CheckStarterHand(player);
-        }
-
-        private static void CheckStarterHand(Player player) // Flytt til gm
-        {
-            if (GameManager.HasWinningHand(player))
-            {
-                Console.WriteLine(player.GetName() + " was dealt a winning hand,");
-                Console.WriteLine("which is not a legal starting hand.");
-                player.DiscardHand();
-                Deal4CardsToPlayer(player);
-            }
+            GameManager.CheckStarterHand(player);
         }
 
         public static ICard ReturnRandomCardFromDeck()

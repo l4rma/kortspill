@@ -25,7 +25,7 @@ namespace kortspill
         //Add more/less ascii "art"?
         //should player wins before discarding? now discards after win.. ..now not..
         // Fix discard algorithm! Fixed! :D
-        //TODO: Change name CardType to Suit
+        //TODO: Change name Suit to Suit
         //TODO: Override operator?
         //TODO: Fix lock and sleep placement. Fixed? Yes, i think so.
         //TODO: Implement at least one more Pattern and/or confirm singleton and flyweight
@@ -34,26 +34,26 @@ namespace kortspill
         /* For testing discarding
          
             var list = new List<ICard>();
-            list.Add(CardFactory.CreateCard(CardValue.Queen, CardType.Diamonds));
-            list.Add(CardFactory.CreateCard(CardValue.Ten, CardType.Spades));
-            list.Add(CardFactory.CreateCard(CardValue.Four, CardType.Spades));
-            list.Add(CardFactory.CreateCard(CardValue.Five, CardType.Diamonds));
-            list.Add(CardFactory.CreateCard(CardValue.Ace, CardType.Clubs));
-            list.Add(CardFactory.CreateCard(CardValue.King, CardType.Diamonds));
+            list.Add(CardFactory.CreateCard(Value.Queen, Suit.Diamonds));
+            list.Add(CardFactory.CreateCard(Value.Ten, Suit.Spades));
+            list.Add(CardFactory.CreateCard(Value.Four, Suit.Spades));
+            list.Add(CardFactory.CreateCard(Value.Five, Suit.Diamonds));
+            list.Add(CardFactory.CreateCard(Value.Ace, Suit.Clubs));
+            list.Add(CardFactory.CreateCard(Value.King, Suit.Diamonds));
             list[4].SpecialRule = "the Joker";
             foreach (var card in list)
             {
                 Console.WriteLine(card.GetCardName());
             }
-            //var sorted = list.GroupBy(c => c.CardType).OrderBy(g => g.Count());
+            //var sorted = list.GroupBy(c => c.Suit).OrderBy(g => g.Count());
             //Console.WriteLine(sorted.First().Key);
-            //var sorted = list.GroupBy(c => c.CardType).OrderBy(g => g.Count());
+            //var sorted = list.GroupBy(c => c.Suit).OrderBy(g => g.Count());
             //Console.WriteLine(sorted.First().Key);
             var sorted = list
                 .GroupBy(x => x.SpecialRule == "the Joker")
                 .Select(x => new
                 {
-                    Cards = x.GroupBy(c => c.CardType).OrderBy(c => c.Count()),
+                    Cards = x.GroupBy(c => c.Suit).OrderBy(c => c.Count()),
                     Count = x.Count(),
                 })
                 .OrderByDescending(x => x.Count)

@@ -9,7 +9,7 @@ namespace kortspill
         public SpadesDecorator(ICard card) 
             : base(card)
         {
-            CardType = CardType.Spades;
+            Suit = Suit.Spades;
         }
     }
 }
