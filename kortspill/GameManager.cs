@@ -12,16 +12,18 @@ namespace kortspill
     internal class GameManager
     {
         private static readonly List<Thread> Threads = new List<Thread>();
-        private static readonly List<Player> Players = new List<Player>();
+        public static List<IPlayer> Players = new List<IPlayer>();
         public static bool GameOver = false;
 
-        public static void EndGame()
-        {
-            GameOver = true;
+        /*************************
+        * System
+        *************************/
+        public static readonly int DrawSpeed = 100; // How often a player should be able to receive a card (milliseconds)
+        public static readonly string[] PlayerNames = { "Nils", "Kåre", "Geir", "Otto" }; // Available player names
+        public static readonly int NumberOfCardsInStartingHand = 4; // Cards in hand at the beginning of the game.
+        private const int MaxPlayers = 4; // Max number of players user can choose. (Cannot be more than 12 playing with one deck of 52 cards.)
 
-            ConsoleLog.PrintWinner();
-        }
-
+        // Start Game
         public void Init() //INFO: Facade Pattern
         {
             var dealer = new Dealer();
@@ -40,28 +42,49 @@ namespace kortspill
             Thread.Sleep(3000);
 
             CreateThreads(numberOfPlayers);
-            
+
             StartThreads(numberOfPlayers);
         }
-
-        private void MakeSpecialCards()
+        // End Game
+        public static void EndGame()
         {
-            ConsoleLog.TextBox("Cards with special rules this game:");
+            GameOver = true;
 
-            string[] rules = {"the Bomb", "the Quarantine", "the Joker", "the Vulture"};
-            for (var i = 0; i < 4; i++)
+            ConsoleLog.PrintWinner();
+        }
+
+        private static void CreatePlayers(int num)
+        {
+            ConsoleLog.TextBox("Players this game:");
+            //Create players
+            for (var i = 0; i < num; i++)
             {
-                AddRuleToCard(rules[i]);
+                Players.Add(PlayerFactory.CreatePlayer());
+                Console.WriteLine("- " + Players[i].Name);
             }
         }
 
-        private static void AddRuleToCard(string rule)
+        private static void CreateThreads(int num)
         {
-            var card = Dealer.ReturnRandomCardFromDeck();
-            card.SpecialRule = rule;
-            Console.WriteLine("- " + card.GetCardName());
+            //Create threads
+            for (var i = 0; i < num; i++)
+            {
+                Threads.Add(new Thread(new ThreadStart(Players[i].Play)));
+            }
         }
 
+        private static void StartThreads(int num)
+        {
+            //Start threads
+            for (var i = 0; i < num; i++)
+            {
+                Threads[i].Start();
+            }
+        }
+
+        /*************************
+        * Game (Dealer)
+        *************************/
         private static int ReturnUserInput()
         {
             Console.Clear();
@@ -77,9 +100,9 @@ namespace kortspill
             }
             else
             {
-                if (num > 4 || num < 2)
+                if (num > MaxPlayers || num < 2)
                 {
-                    ConsoleLog.TextBox("You must choose between 2-4");
+                    ConsoleLog.TextBox("You must choose between 2-" + MaxPlayers);
                     Thread.Sleep(1500);
                     return -1;
                 }
@@ -100,55 +123,80 @@ namespace kortspill
             return numberOfPlayers;
         }
 
-        private static void CreatePlayers(int num)
+        /*************************
+        * Players
+        *************************/
+        public static void CheckStarterHand(IPlayer player)
         {
-            ConsoleLog.TextBox("Players this game:");
-            //Create players
-            for (var i = 0; i < num; i++)
+            if (GameManager.HasWinningHand(player))
             {
-                Players.Add(PlayerFactory.CreatePlayer());
-                Console.WriteLine("- " + Players[i].Name);
-            }
-        }
-        private static void CreateThreads(int num)
-        {
-            //Create threads
-            for (var i = 0; i < num; i++)
-            {
-                Threads.Add(new Thread(new ThreadStart(Players[i].Play)));
-            }
-        }
-        private static void StartThreads(int num)
-        {
-            //Start threads
-            for (var i = 0; i < num; i++)
-            {
-                Threads[i].Start();
+                Console.WriteLine(player.Name + " was dealt a winning hand,");
+                Console.WriteLine("which is not a legal starting hand.");
+                player.DiscardHand();
+                Dealer.AddStartingCardsToPlayerDeck(player, NumberOfCardsInStartingHand);
             }
         }
 
-        public static List<Player> GetPlayers()
+        public static void CheckIfWinner(IPlayer player)
         {
-            return Players;
+            if (HasWinningHand(player))
+            {
+                //if (GameOver) return; //TODO: Kan fjernes?
+
+                player.Winner = true;
+
+                GameManager.EndGame();
+            }
         }
 
-        public static void CheckCard(Player player, ICard card)
+        public static bool HasWinningHand(IPlayer player)
+        {
+            int sameSuitNeeded = 4;
+            foreach (var card in player.Hand.Where(card => card.SpecialRule == "the Joker")) sameSuitNeeded--;
+
+            //TODO: Fix properly
+            return player.Count(Suit.Spades) >= sameSuitNeeded || player.Count(Suit.Diamonds) >= sameSuitNeeded || player.Count(Suit.Hearts) >= sameSuitNeeded ||
+                   player.Count(Suit.Clubs) >= sameSuitNeeded;
+        }
+
+        /*************************
+        * Cards
+        *************************/
+        private void MakeSpecialCards()
+        {
+            ConsoleLog.TextBox("Cards with special rules this game:");
+
+            string[] rules = { "the Bomb", "the Quarantine", "the Joker", "the Vulture" };
+            for (var i = 0; i < 4; i++)
+            {
+                AddRuleToCard(rules[i]);
+            }
+        }
+
+        private static void AddRuleToCard(string rule)
+        {
+            var card = Dealer.ReturnRandomCardFromDeck();
+            card.SpecialRule = rule;
+            Console.WriteLine("- " + card.GetCardName());
+        }
+
+        public static void CheckCard(IPlayer player, ICard card)
         {
             if (card.SpecialRule == null) return;
-            
+
             ExecuteRule(player, card);
-            
+
         }
 
-        private static void ExecuteRule(Player player, ICard card)
+        private static void ExecuteRule(IPlayer player, ICard card)
         {
-            Console.WriteLine("\n"+ player.Name + " reads rules: ");
+            Console.WriteLine("\n" + player.Name + " reads rules: ");
             Console.WriteLine("This card is " + card.SpecialRule + "!");
             switch (card.SpecialRule)
             {
                 case "the Bomb":
                     Console.WriteLine("Discard all cards, and receive 4 new cards.");
-                    
+
                     player.DiscardHand();
                     for (int i = 0; i < 4; i++)
                     {
@@ -172,39 +220,6 @@ namespace kortspill
                     break;
             }
             Console.WriteLine();
-        }
-
-        public static void CheckStarterHand(Player player)
-        {
-            if (GameManager.HasWinningHand(player))
-            {
-                Console.WriteLine(player.Name + " was dealt a winning hand,");
-                Console.WriteLine("which is not a legal starting hand.");
-                player.DiscardHand();
-                Dealer.Deal4CardsToPlayer(player);
-            }
-        }
-
-        public static void CheckIfWinner(Player player)
-        {
-            if (HasWinningHand(player))
-            {
-                if (GameOver) return; //TODO: Kan fjernes?
-
-                player.Winner = true;
-                
-                GameManager.EndGame();
-            }
-        }
-
-        public static bool HasWinningHand(Player player)
-        {
-            int sameSuitNeeded = 4;
-            foreach (var card in player.Hand.Where(card => card.SpecialRule == "the Joker")) sameSuitNeeded--;
-
-            //TODO: Fix properly
-            return player.Count(Suit.Spades) >= sameSuitNeeded || player.Count(Suit.Diamonds) >= sameSuitNeeded || player.Count(Suit.Hearts) >= sameSuitNeeded ||
-                   player.Count(Suit.Clubs) >= sameSuitNeeded;
         }
     }
 }

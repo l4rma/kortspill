@@ -44,12 +44,12 @@ namespace kortspill
             return deck;
         }
 
-        public static void AcceptCardRequest(Player player)
+        public static void AcceptCardRequest(IPlayer player)
         {
             lock (Lock)
             {
                 
-                Thread.Sleep(100); // Adjust the draw rhythm
+                Thread.Sleep(GameManager.DrawSpeed); // Adjust the draw rhythm
                 if (player.IsQuarantined)
                 {
                     Console.WriteLine("\n" + player.Name + " requested a card, but is Quarantined!\n" +
@@ -62,33 +62,33 @@ namespace kortspill
             
         }
 
-        public static void DealTopCard(Player player)
+        public static void DealTopCard(IPlayer player)
         {
-            ICard card = Deck[0];                // Card to deal
+            ICard card = Deck[0];                // Select top card
             if (GameManager.GameOver) return;    // Stop other players from getting more cards after someone wins
             player.Hand.Add(card);               // Give card to player
             Deck.RemoveAt(0);               // Remove card from dealer
-            Console.WriteLine(player.Name + " received " + card.GetCardName()); 
+            Console.WriteLine(player.Name + " received " + card.GetCardName()); // Update "UI"
             GameManager.CheckCard(player, card); // Check if card has a special rule
         }
 
         public static void DealStartingHands()
         {
-            foreach (Player player in GameManager.GetPlayers())
+            foreach (var player in GameManager.Players)
             {
-                Deal4CardsToPlayer(player);
+                AddStartingCardsToPlayerDeck(player, GameManager.NumberOfCardsInStartingHand);
             }
         }
 
-        public static void Deal4CardsToPlayer(Player player)
+        public static void AddStartingCardsToPlayerDeck(IPlayer player, int n)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < n; i++)
             {
                 player.Hand.Add(Deck[0]);
                 Deck.RemoveAt(0);
             }
 
-            ConsoleLog.TextBox(player.Name + " gets 4 cards");
+            ConsoleLog.TextBox(player.Name + " gets " + n + " cards:");
             foreach (var card in player.Hand)
             {
                 Console.WriteLine("- " + card.GetCardName());

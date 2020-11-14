@@ -16,8 +16,8 @@ namespace kortspill
         public List<ICard> Hand { get; } = new List<ICard>();
         public string Name { get; }
 
-        public bool Winner = false;
-        public int MaxHandSize = HandSize.GetState().Max;  // Singleton in action TODO: Ikker riktig implementert.
+        public bool Winner { get; set; } = false;
+        public int MaxHandSize { get; set; } = HandSize.GetState().Max; // Singleton in action TODO: Ikke riktig implementert?
         public bool IsQuarantined { get; set; } = false;
         public int ExtraCards { get; set; } = 0;
 

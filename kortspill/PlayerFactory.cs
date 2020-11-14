@@ -6,14 +6,13 @@ namespace kortspill
 {
     internal class PlayerFactory
     {
-
-        private static readonly string[] PlayerNames = { "Nils", "Kåre", "Geir", "Otto" };
         private static int _nameIndex = 0;
 
-        public static Player CreatePlayer()
+        public static IPlayer CreatePlayer()
         {
             _nameIndex++;
-            return new Player(PlayerNames[_nameIndex-1]);
+            IPlayer player = new Player(GameManager.PlayerNames[_nameIndex - 1]);
+            return player;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace kortspill
                 case Suit.Diamonds:
                     card = new DiamondsDecorator(new Card(value));
                     break;
-                default:
+                default: //Should never happen
                     card = new Card(value);
                     Console.WriteLine("ERROR: Card has not set type and will be clubs...");
                     break;

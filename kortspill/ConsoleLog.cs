@@ -10,7 +10,7 @@ namespace kortspill
         public static void PrintWinner()
         {
             Console.WriteLine();
-            foreach (var player in GameManager.GetPlayers().Where(player => player.Winner))
+            foreach (var player in GameManager.Players.Where(player => player.Winner))
             {
                 Console.WriteLine("|--------------------|");
                 Console.WriteLine("| " + player.Name + " won the game! |");
