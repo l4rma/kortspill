@@ -83,7 +83,7 @@ namespace kortspill
         }
 
         /*************************
-        * Game (Dealer)
+        * Game
         *************************/
         private static int ReturnUserInput()
         {
@@ -141,8 +141,6 @@ namespace kortspill
         {
             if (HasWinningHand(player))
             {
-                //if (GameOver) return; //TODO: Kan fjernes?
-
                 player.Winner = true;
 
                 GameManager.EndGame();
@@ -155,6 +153,7 @@ namespace kortspill
             foreach (var card in player.Hand.Where(card => card.SpecialRule == "the Joker")) sameSuitNeeded--;
 
             //TODO: Fix properly
+            //Lage fire kort for sammenligning?
             return player.Count(Suit.Spades) >= sameSuitNeeded || player.Count(Suit.Diamonds) >= sameSuitNeeded || player.Count(Suit.Hearts) >= sameSuitNeeded ||
                    player.Count(Suit.Clubs) >= sameSuitNeeded;
         }

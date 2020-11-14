@@ -12,6 +12,16 @@
             Value = value;
         }
 
+        public static bool operator ==(Card card1, Card card2)
+        {
+            return card1.Suit == card2.Suit;
+        }
+
+        public static bool operator !=(Card card1, Card card2)
+        {
+            return card1.Suit != card2.Suit;
+        }
+
         public string GetCardName()
         {
             if(SpecialRule != null) return Value + " of " + Suit + " (" + SpecialRule + ")";

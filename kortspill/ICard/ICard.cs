@@ -8,6 +8,5 @@ namespace kortspill
         Value Value { get; }
         string SpecialRule { get; set; }
         public string GetCardName();
-
     }
 }
