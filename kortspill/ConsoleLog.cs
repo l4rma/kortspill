@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kortspill
 {
-    class ConsoleLog
+    public class ConsoleLog
     {
         public static void PrintWinner()
         {

@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Kortspill
 {
-    internal class Program
+    public class Program
     { 
         private static readonly GameManager GameManager = new GameManager();
 

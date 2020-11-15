@@ -5,7 +5,7 @@ using System.Text;
 namespace Kortspill
 {
     //INFO: Decorator Design Pattern
-    internal class DiamondsDecorator : CardDecorator
+    public class DiamondsDecorator : CardDecorator
     {
         public DiamondsDecorator(ICard card)
             : base(card)

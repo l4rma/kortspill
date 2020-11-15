@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kortspill
 {
-    internal interface IPlayer
+    public interface IPlayer
     {
         //Properties:
         public List<ICard> Hand { get; }
@@ -16,7 +16,7 @@ namespace Kortspill
 
         //Methods:
         public void RequestCard();
-        public void DiscardUnwantedCard(ICard card);
+        public void DiscardUnwantedCard();
         public void Play();
         public void DiscardHand();
         public int Count(Suit suit);

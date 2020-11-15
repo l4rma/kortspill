@@ -1,6 +1,6 @@
 ﻿namespace Kortspill
 {
-    internal class Card : ICard
+    public class Card : ICard
 
     {
         public Value Value { get; }

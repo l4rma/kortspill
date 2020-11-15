@@ -5,7 +5,7 @@ using System.Text;
 namespace Kortspill
 {
     //INFO: Factory Design Pattern
-    internal class CardFactory
+    public class CardFactory
     {
         public static ICard CreateCard(Value value, Suit type)
         {

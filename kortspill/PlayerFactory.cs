@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kortspill
 {
-    internal class PlayerFactory
+    public class PlayerFactory
     {
         private static int _nameIndex = 0;
 

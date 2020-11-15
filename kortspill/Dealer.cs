@@ -9,7 +9,7 @@ using System.Threading;
 namespace Kortspill
 
 {
-    internal class Dealer
+    public class Dealer
     {
         public static List<ICard> Deck = new List<ICard>();
         private static readonly object Lock = new object();

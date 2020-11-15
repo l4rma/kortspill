@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Kortspill
 {
-    internal class GameManager
+    public class GameManager
     {
         private static readonly List<Thread> Threads = new List<Thread>();
         public static List<IPlayer> Players = new List<IPlayer>();

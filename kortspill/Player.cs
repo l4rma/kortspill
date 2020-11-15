@@ -11,7 +11,7 @@ using System.Threading.Channels;
 
 namespace Kortspill
 {
-    internal class Player : IPlayer
+    public class Player : IPlayer
     {
         public List<ICard> Hand { get; } = new List<ICard>();
         public string Name { get; }
@@ -31,7 +31,7 @@ namespace Kortspill
             while (!GameManager.GameOver) 
             {
                 RequestCard();
-                DiscardUnwantedCard(WhatToGiveAway());
+                DiscardUnwantedCard();
                 GameManager.CheckIfWinner(this);
             }
         }
@@ -87,9 +87,10 @@ namespace Kortspill
             Dealer.AcceptCardRequest(this);
         }
 
-        public void DiscardUnwantedCard(ICard card)
+        public void DiscardUnwantedCard()
         {
             if (Hand.Count <= MaxHandSize + ExtraCards) return;
+            ICard card = WhatToGiveAway();
             Dealer.Deck.Add(card);
             Console.WriteLine(Name + " discarded " + card.GetCardName());
             Hand.Remove(card);
