@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace kortspill
+namespace Kortspill
 {
     //INFO: Singleton Design Pattern
     public sealed class HandSize

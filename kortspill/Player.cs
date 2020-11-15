@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Channels;
 
 
-namespace kortspill
+namespace Kortspill
 {
     internal class Player : IPlayer
     {

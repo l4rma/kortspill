@@ -7,7 +7,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 
-namespace kortspill
+namespace Kortspill
 {
     internal class GameManager
     {

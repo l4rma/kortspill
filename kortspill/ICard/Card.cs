@@ -1,4 +1,4 @@
-﻿namespace kortspill
+﻿namespace Kortspill
 {
     internal class Card : ICard
 

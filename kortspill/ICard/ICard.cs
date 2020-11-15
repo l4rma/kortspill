@@ -1,6 +1,6 @@
 ﻿using System.Dynamic;
 
-namespace kortspill
+namespace Kortspill
 {
     public interface ICard
     {

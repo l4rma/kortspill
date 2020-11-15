@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace kortspill
+namespace Kortspill
 {
     internal class PlayerFactory
     {

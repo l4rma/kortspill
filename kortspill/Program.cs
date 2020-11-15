@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace kortspill
+namespace Kortspill
 {
     internal class Program
     { 
@@ -35,7 +35,7 @@ namespace kortspill
 
         /* For testing discarding
          
-            var list = new List<ICard>();
+            var handOfCards = new List<ICard>();
             list.Add(CardFactory.CreateCard(Value.Queen, Suit.Diamonds));
             list.Add(CardFactory.CreateCard(Value.Ten, Suit.Spades));
             list.Add(CardFactory.CreateCard(Value.Four, Suit.Spades));

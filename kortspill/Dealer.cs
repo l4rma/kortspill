@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 
 
-namespace kortspill
+namespace Kortspill
 
 {
     internal class Dealer
@@ -59,7 +59,6 @@ namespace kortspill
                 }
                 DealTopCard(player);
             }
-            
         }
 
         public static void DealTopCard(IPlayer player)
