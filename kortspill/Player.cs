@@ -17,7 +17,7 @@ namespace Kortspill
         public string Name { get; }
 
         public bool Winner { get; set; } = false;
-        public int MaxHandSize { get; set; } = HandSize.GetState().Max; // Singleton in action TODO: Ikke riktig implementert?
+        public int MaxHandSize { get; set; } = HandSize.GetState().Max; // Singleton
         public bool IsQuarantined { get; set; } = false;
         public int ExtraCards { get; set; } = 0;
 
@@ -26,7 +26,7 @@ namespace Kortspill
             Name = name;
         }
 
-        public void Play() //INFO: Facade Design Pattern
+        public void Play() 
         {
             while (!GameManager.GameOver) 
             {
@@ -36,16 +36,8 @@ namespace Kortspill
             }
         }
 
-        private ICard WhatToGiveAway() //TODO: ITS NOT WORKING! FIX IT!
+        private ICard WhatToGiveAway() 
         {
-            /* Console log hands before discarding
-            Console.WriteLine("Hand:");
-            foreach (var card in _hand)
-            {
-                Console.WriteLine(card.GetCardName());
-            }
-            */
-            
             var sorted = Hand
                 .GroupBy(x => x.SpecialRule == "the Joker")
                 .Select(x => new
@@ -59,9 +51,6 @@ namespace Kortspill
             {
                 if (card.Suit == sorted.First().Key)
                 {
-                    /* Checking what card to give away
-                     * Console.WriteLine("\nwhat to give away: " + card.GetCardName());
-                     */
                     return card;
                 }
             }

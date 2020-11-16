@@ -48,15 +48,7 @@ namespace Kortspill
         {
             lock (Lock)
             {
-                
                 Thread.Sleep(GameManager.DrawSpeed); // Adjust the draw rhythm
-                if (player.IsQuarantined)
-                {
-                    Console.WriteLine("\n" + player.Name + " requested a card, but is Quarantined!\n" +
-                                      "He did not receive a card, but it no longer in Quarantine.\n");
-                    player.IsQuarantined = false;
-                    return;
-                }
                 DealTopCard(player);
             }
         }
@@ -65,6 +57,13 @@ namespace Kortspill
         {
             ICard card = Deck[0];                // Select top card
             if (GameManager.GameOver) return;    // Stop other players from getting more cards after someone wins
+            if (player.IsQuarantined)            // If player is quarantined, do not give card
+            {
+                Console.WriteLine("\n" + player.Name + " requested a card, but is Quarantined!\n" +
+                                  "He did not receive a card, but it no longer in Quarantine.\n");
+                player.IsQuarantined = false;
+                return;
+            }
             player.Hand.Add(card);               // Give card to player
             Deck.RemoveAt(0);               // Remove card from dealer
             Console.WriteLine(player.Name + " received " + card.GetCardName()); // Update "UI"
